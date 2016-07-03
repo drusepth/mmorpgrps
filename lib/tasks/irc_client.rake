@@ -118,7 +118,7 @@ namespace :irc do
             soul.age!
             soul.move!
 
-            other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player)
+            other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
             other_souls_here.each do |other_soul|
               #soul.attack! other_soul
 
