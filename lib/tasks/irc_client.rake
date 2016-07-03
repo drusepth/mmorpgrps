@@ -10,15 +10,19 @@ namespace :irc do
     }
 
     # TODO: Define these elsewhere
+    # TODO: Allow spawning at a specific location
     LUI_SPAWN_REGEX = /spawn (\d+|a)? ?(rock|paper|scissor)s?/
 
     def world_stats
       {
-        'Souls':    Soul.count,
-        'Players':  Player.count,
-        'Rocks':    Soul.where(role: 'rock').count,
-        'Papers':   Soul.where(role: 'paper').count,
-        'Scissors': Soul.where(role: 'scissor').count
+        'Living souls':     Soul.where(alive: true).count,
+        'Dead souls':       Soul.where(alive: false).count,
+        'Free souls':       Player.sum(:souls),
+        'Players':          Player.count,
+        'Rocks':            Soul.where(role: 'rock').count,
+        'Papers':           Soul.where(role: 'paper').count,
+        'Scissors':         Soul.where(role: 'scissor').count,
+        'Average soul age': Soul.average(:age).to_i
       }
     end
 
@@ -87,6 +91,14 @@ namespace :irc do
         m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
+      on :message, /locations/ do |m|
+        m.reply "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
+      end
+
+      on :message, /source/ do |m|
+        m.reply "Source code here"
+      end
+
       on :message, /.*/ do |m|
           # Tick world forward
           # TODO: Move game tick logic into WorldTickService
@@ -94,9 +106,26 @@ namespace :irc do
             soul.age!
             soul.move!
 
-            other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y)
+            other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player)
             other_souls_here.each do |other_soul|
-              soul.battle! other_soul
+              #soul.attack! other_soul
+
+              messages = [
+                "#{soul.player.name}'s #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
+              ]
+              if soul.alive
+                messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
+              else
+                messages << "#{soul.player.name}'s #{soul.role} has died!"
+              end
+
+              if other_soul.alive
+                messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
+              else
+                messages << "#{other_soul.player.name}'s #{other_soul.role} has died!"
+              end
+
+              m.reply(messages.join ' ')
             end
           end
         end

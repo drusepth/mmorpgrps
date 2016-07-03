@@ -27,11 +27,18 @@ class Soul < ActiveRecord::Base
       damage *= 2 if other_soul.role.downcase == 'rock'
     end
 
-    new_health = other_soul.health - damage
-    other_soul.update_attributes({
-      health: [new_health, 0].max,
-      alive:  new_health <= 0
+    other_soul.update_attribute :health, other_soul.health - damage
+    other_soul.die! if other_soul.reload.health
+  end
+
+  def die!
+    update_attributes({
+      health: 0,
+      alive:  false
     })
+
+    # Return the soul to its owner
+    player.update_attribute :souls, player.souls + 1
   end
 
   private
