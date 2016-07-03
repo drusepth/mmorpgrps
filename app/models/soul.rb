@@ -13,7 +13,8 @@ class Soul < ActiveRecord::Base
   end
 
   def move!
-    swarm_nearest_faction!
+    move_randomly!
+    #swarm_nearest_faction!
   end
 
   def attack! other_soul
