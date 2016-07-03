@@ -1,0 +1,42 @@
+<style type="text/css">
+	html, body { height: 100%; }
+	#map { height: 100%; width: 100%; }
+</style>
+
+<div id="map"></div>
+
+<script type="text/javascript">
+var rocks = {
+  x: [<%= @rocks.map(&:x).join(', ') %>],
+  y: [<%= @rocks.map(&:y).join(', ') %>],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Rock',
+  text: [<%= @rocks.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  marker: { size: 8 }
+};
+
+var papers = {
+  x: [<%= @papers.map(&:x).join(', ') %>],
+  y: [<%= @papers.map(&:y).join(', ') %>],
+  mode: 'markers',
+  name: 'Paper',
+  type: 'scatter',
+  text: [<%= @papers.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  marker: { size: 8 }
+};
+
+var scissors = {
+  x: [<%= @scissors.map(&:x).join(', ') %>],
+  y: [<%= @scissors.map(&:y).join(', ') %>],
+  mode: 'markers',
+  name: 'Scissors',
+  type: 'scatter',
+  text: [<%= @scissors.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  marker: { size: 8 }
+};
+
+var data = [rocks, papers, scissors];
+
+Plotly.newPlot('map', data);
+</script>

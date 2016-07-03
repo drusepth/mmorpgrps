@@ -15,6 +15,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Clients
 gem 'cinch'
 
+# World views
+gem 'plotlyjs-rails'
+
 group :development, :test do
   #gem 'byebug'
   gem 'pry'
