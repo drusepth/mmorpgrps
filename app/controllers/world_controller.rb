@@ -5,6 +5,10 @@ class WorldController < ApplicationController
   	@scissors = Soul.where(alive: true, role: 'scissor')
   end
 
+  def player_map
+    @players = Player.all
+  end
+
   def scoreboards
   end
 end

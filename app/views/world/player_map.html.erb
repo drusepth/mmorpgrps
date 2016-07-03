@@ -1,0 +1,25 @@
+<style type="text/css">
+	html, body { height: 100%; }
+	#map { height: 100%; width: 100%; }
+</style>
+
+<div id="map"></div>
+
+<script type="text/javascript">
+var data = [];
+<% @players.each do |player| %>
+	<% souls = Soul.where(alive: true, player: player) %>
+	var player<%= player.id %> = {
+		x: [<%= souls.map(&:x).join(', ') %>],
+		y: [<%= souls.map(&:y).join(', ') %>],
+		mode: 'markers',
+		type: 'scatter',
+		name: '<%= player.name %>',
+		text: [<%= souls.map { |s| "'#{player.name}s L#{s.level} (#{s.role}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
+		marker: { size: 8 }
+	}
+	data = data.concat(player<%= player.id %>);
+<% end %>
+
+Plotly.newPlot('map', data);
+</script>
