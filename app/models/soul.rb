@@ -36,6 +36,7 @@ class Soul < ActiveRecord::Base
   end
 
   def level_up!
+    player.update_attribute :souls, player.souls + 1
     update_attributes({
       level: level + 1,
       health: health + HEALTH_PER_LEVEL_UP

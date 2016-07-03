@@ -12,7 +12,7 @@ Rules of the game
   spawn knights of Rock, Paper, or Scissors into the world.
 * For the time being, knights are spawned randomly within the bounding box of the
   outer-most knights of the world.
-* The game ticks time forward every with every message sent over IRC, whether related
+* The game ticks time forward  with every message sent over IRC, whether related
   to the game or not. During each tick, every knight ages, moves randomly, and attacks
   all other knights owned by other players nearby.
 * Knights never attack their own faction, however. Scissors won't attack scissors,
@@ -23,6 +23,9 @@ Rules of the game
 * Whenever a knight dies, the player that spawned it is refunded one soul to spawn
   another knight with.
 * Whenever a knight dies, the knight that killed it levels up and gains 50 health.
+* Whenever a knight levels up, the player that spawned it is awarded an extra soul
+  to spawn an additional knight with. The death of this additonal knight refunds a
+  soul to the player like any other knight.
 
 Future rules
 ------------
