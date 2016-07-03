@@ -1,28 +1,47 @@
-== README
+== MMORPGRPS
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Massively Multiplayer Online Role Playing Game of Rock, Paper, Scissors
 
-Things you may want to cover:
+Played over IRC with a linguistic user interface.
 
-* Ruby version
+== Rules of the game
 
-* System dependencies
+* Each player begins with 10 free souls, and can use any number of those souls to
+  spawn knights of Rock, Paper, or Scissors into the world.
+* For the time being, knights are spawned randomly within the bounding box of the
+  outer-most knights of the world.
+* The game ticks time forward every with every message sent over IRC, whether related
+  to the game or not. During each tick, every knight ages, moves randomly, and attacks
+  all other knights owned by other players nearby.
+* Knights never attack their own faction, however. Scissors won't attack scissors,
+  paper won't attack paper, and rock won't attack rock.
+* Knights start out with 100 HP, and super-effective attacks (e.g. paper to rock) deal
+  100 damage. Not-very-effective attacks (e.g. paper to scissors) deal 25 damage.
+* Whenever a knight dies, the player that spawned it is refunded one soul to spawn
+  another knight with.
 
-* Configuration
+== Future rules
 
-* Database creation
+Soon, the following additions will be in play:
 
-* Database initialization
+* Players will be able to choose where their knights spawn, allowing for more tactical
+  spawns, better faction strongholds, and scoreboard-led assassination missions.
+* Rather than randomly moving around the world, knights will seek out their own factions
+  and travel in packs of varying sizes.
 
-* How to run the test suite
+And, of course, suggestions are welcome
 
-* Services (job queues, cache servers, search engines, etc.)
+== Scoring
 
-* Deployment instructions
+Currently, the following scoreboards are available to compete on:
 
-* ...
+* Oldest knight: the oldest living knights of the world (and their locations) are
+  displayed. To get onto this scoreboard, don't die!
+* Largest faction: the largest faction (rock, paper, scissors) by numbers is displayed
+  here. Use this scoreboard to decide whether you want to join the crowd, fight for the
+  underdog, or make a third party relevant.
 
+More scoreboards are in the works to enable players to play how they want to play. Future
+scoreboards include "most kills", "distance traveled", "battles fought", and more.
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Soon, scoreboards will be available online as well.
