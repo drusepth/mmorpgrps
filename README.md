@@ -10,8 +10,10 @@ Rules of the game
 
 * Each player begins with 10 free souls, and can use any number of those souls to
   spawn knights of Rock, Paper, or Scissors into the world.
+* There are no boundaries to the world. The center of it begins at coordinate (0, 0)
+  and stretches infinitely in all four directions.
 * For the time being, knights are spawned randomly within the bounding box of the
-  outer-most knights of the world.
+  outer-most knights in each direction of the world.
 * The game ticks time forward  with every message sent over IRC, whether related
   to the game or not. During each tick, every knight ages, moves randomly, and attacks
   all other knights owned by other players nearby.
