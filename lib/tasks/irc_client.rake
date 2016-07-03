@@ -11,7 +11,19 @@ namespace :irc do
 
     # TODO: Define these elsewhere
     # TODO: Allow spawning at a specific location
-    LUI_SPAWN_REGEX = /spawn (\d+|a)? ?(rock|paper|scissor)s?/
+    LUI_SPAWN_REGEX             = /spawn (\d+|a)? ?(rock|paper|scissor)s?/
+
+    LUI_HELP_INFO_REGEX         = /help/
+    LUI_WORLD_INFO_REGEX        = /world/
+    LUI_LOCATIONS_INFO_REGEX    = /locations/
+    LUI_SOURCE_CODE_INFO_REGEX  = /source/
+    LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
+
+    LUI_OLDEST_SCOREBOARD_REGEX = /oldest/
+    LUI_KILLS_SCOREBOARD_REGEX  = /kills/ # TODO: implement
+
+    GAME_TICK_REGEX             = /.*/
+
 
     def world_stats
       {
@@ -69,7 +81,7 @@ namespace :irc do
         end
       end
 
-      on :message, /help/ do |m|
+      on :message, LUI_HELP_INFO_REGEX do |m|
         m.reply([
           "Welcome to the war-torn world of rock, paper, scissors!",
           "Every time someone says something on IRC, time ticks forward. Rocks kill scissors, scissors kill paper, and paper kills rock.",
@@ -77,29 +89,29 @@ namespace :irc do
         ].join ' ')
       end
 
-      on :message, /world/ do |m|
+      on :message, LUI_WORLD_INFO_REGEX do |m|
         m.reply "The world contains #{human_friendly_world_stats}."
       end
 
-      on :message, /souls?/ do |m|
+      on :message, LUI_SOUL_COUNT_INFO_REGEX do |m|
         player = Player.find_or_initialize_by(name: m.user.nick)
         m.reply "#{m.user.nick}: You have #{player.souls} soul(s) remaining. You can use them to spawn knights of Rock, Paper, or Scissors into the world. Just say something like 'spawn 5 rocks' or 'spawn 1 scissors'."
       end
 
-      on :message, /oldest/ do |m|
+      on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
         m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
-      on :message, /locations/ do |m|
+      on :message, LUI_LOCATIONS_INFO_REGEX do |m|
         m.reply "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
       end
 
-      on :message, /source/ do |m|
+      on :message, LUI_SOURCE_CODE_INFO_REGEX do |m|
         m.reply "Source code here"
       end
 
-      on :message, /.*/ do |m|
+      on :message, GAME_TICK_REGEX do |m|
           # Tick world forward
           # TODO: Move game tick logic into WorldTickService
           Soul.where(alive: true).each do |soul|
