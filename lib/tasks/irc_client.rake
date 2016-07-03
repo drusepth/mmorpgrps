@@ -54,7 +54,6 @@ namespace :irc do
 
       on :message, LUI_SPAWN_REGEX do |m|
         player = Player.find_or_initialize_by(name: m.user.nick)
-        player.save
 
         m.message.scan(LUI_SPAWN_REGEX) do |quantity, role|
           quantity = 1 if quantity.nil?
@@ -63,9 +62,9 @@ namespace :irc do
           else
             puts "Spawning #{quantity} #{role}"
 
-            quantity.to_i.times do |i|
-              if player.reload.souls > 0
-                Soul.create({
+            if player.souls >= quantity.to_i
+              Soul.create(Array.new(quantity.to_i) {
+                {
                   player: player,
                   role:   role,
 
@@ -76,9 +75,9 @@ namespace :irc do
 
                   x:      rand(Soul.maximum :x) - rand(Soul.maximum :x),
                   y:      rand(Soul.maximum :y) - rand(Soul.maximum :y),
-                })
-                player.update_attribute :souls, player.souls - 1
-              end
+                }
+              })
+              player.update_attribute :souls, player.souls - quantity.to_i
             end
 
             m.reply "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
@@ -141,7 +140,8 @@ namespace :irc do
       on :message, GAME_TICK_REGEX do |m|
         # Tick world forward
         # TODO: Move game tick logic into WorldTickService
-        Soul.where(alive: true).each do |soul|
+        souls = Soul.where(alive: true)
+        souls.each do |soul|
           soul.age!
           soul.move!
 
@@ -167,10 +167,10 @@ namespace :irc do
             m.reply(messages.join ' ')
             other_soul.save if other_soul.changed?
           end
+        end
 
-          if soul.changed?
-            soul.save
-          end
+        ActiveRecord::Base.transaction do
+          souls.each { |soul| soul.save if soul.changed? }
         end
       end
     end
