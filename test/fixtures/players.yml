@@ -2,6 +2,8 @@
 
 one:
   name: MyString
+  souls: 1
 
 two:
   name: MyString
+  souls: 1
