@@ -20,7 +20,7 @@ namespace :irc do
     LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
 
     LUI_OLDEST_SCOREBOARD_REGEX = /oldest/
-    LUI_KILLS_SCOREBOARD_REGEX  = /kills/ # TODO: implement
+    LUI_LEVEL_SCOREBOARD_REGEX  = /level/
 
     GAME_TICK_REGEX             = /.*/
 
@@ -101,6 +101,11 @@ namespace :irc do
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
         m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+      end
+
+      on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
+        soul = Soul.where(alive: true).order('level DESC').first
+        m.reply "The highest level living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That level #{soul.level} #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LOCATIONS_INFO_REGEX do |m|

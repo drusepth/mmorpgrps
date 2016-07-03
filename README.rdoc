@@ -17,8 +17,10 @@ Played over IRC with a linguistic user interface.
   paper won't attack paper, and rock won't attack rock.
 * Knights start out with 100 HP, and super-effective attacks (e.g. paper to rock) deal
   100 damage. Not-very-effective attacks (e.g. paper to scissors) deal 25 damage.
+* Older knights attack first.
 * Whenever a knight dies, the player that spawned it is refunded one soul to spawn
   another knight with.
+* Whenever a knight dies, the knight that killed it levels up and gains 50 health.
 
 == Future rules
 
@@ -37,6 +39,8 @@ Currently, the following scoreboards are available to compete on:
 
 * Oldest knight: the oldest living knights of the world (and their locations) are
   displayed. To get onto this scoreboard, don't die!
+* Highest level: knights level up whenever they kill an enemy knight. To get onto this
+  scoreboard, pick your race as wisely as you pick your battles!
 * Largest faction: the largest faction (rock, paper, scissors) by numbers is displayed
   here. Use this scoreboard to decide whether you want to join the crowd, fight for the
   underdog, or make a third party relevant.

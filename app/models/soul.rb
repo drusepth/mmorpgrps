@@ -2,6 +2,7 @@ class Soul < ActiveRecord::Base
   belongs_to :player
 
   STARTING_HEALTH = 100
+  HEALTH_PER_LEVEL_UP = 50
 
   def age!
     update_attribute :age, age + 1
@@ -28,7 +29,17 @@ class Soul < ActiveRecord::Base
     end
 
     other_soul.update_attribute :health, other_soul.health - damage
-    other_soul.die! if other_soul.reload.health
+    if other_soul.reload.health <= 0
+      level_up!
+      other_soul.die!
+    end
+  end
+
+  def level_up!
+    update_attributes({
+      level: level + 1,
+      health: health + HEALTH_PER_LEVEL_UP
+    })
   end
 
   def die!
