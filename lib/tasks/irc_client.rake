@@ -5,7 +5,7 @@ namespace :irc do
 
     config = {
       network:  'irc.amazdong.com',
-      channel:  '#test',
+      channel:  '#rps',
       nick:     'RPSGM'
     }
 
@@ -18,9 +18,10 @@ namespace :irc do
     LUI_LOCATIONS_INFO_REGEX    = /locations/
     LUI_SOURCE_CODE_INFO_REGEX  = /source/
     LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
+    LUI_MY_SOULS_INFO_REGEX     = /my stats/
 
     LUI_OLDEST_SCOREBOARD_REGEX = /oldest/
-    LUI_LEVEL_SCOREBOARD_REGEX  = /level/
+    LUI_LEVEL_SCOREBOARD_REGEX  = /level|kills?|strongest/
 
     GAME_TICK_REGEX             = /.*/
 
@@ -77,7 +78,7 @@ namespace :irc do
               player.update_attribute :souls, player.souls - 1
             end
 
-            m.reply "Your #{quantity} #{role} have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
+            m.reply "Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
           end
         end
       end
@@ -101,12 +102,29 @@ namespace :irc do
 
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
-        m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+        m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('level DESC').first
         m.reply "The highest level living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That level #{soul.level} #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+      end
+
+      on :message, LUI_MY_SOULS_INFO_REGEX do |m|
+        player   = Player.find_or_initialize_by(name: m.user.nick)
+        rocks    = Soul.where(player: player, role: 'rock', alive: true)
+        papers   = Soul.where(player: player, role: 'paper', alive: true)
+        scissors = Soul.where(player: player, role: 'scissors', alive: true)
+
+        m.reply([
+          "#{player.name}: You currently control #{rocks.count} rocks (",
+          rocks.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
+          "), #{papers.count} papers (",
+          papers.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
+          "), and #{scissors.count} scissors (",
+          scissors.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
+          ")."
+        ].join)
       end
 
       on :message, LUI_LOCATIONS_INFO_REGEX do |m|
@@ -129,7 +147,7 @@ namespace :irc do
               soul.attack! other_soul
 
               messages = [
-                "#{soul.player.name}'s #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
+                "#{soul.player.name}'s L#{soul.level} #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
               ]
               if soul.alive
                 messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
