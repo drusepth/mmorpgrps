@@ -63,22 +63,24 @@ namespace :irc do
             puts "Spawning #{quantity} #{role}"
 
             quantity.to_i.times do |i|
-              Soul.create({
-                player: player,
-                role:   role,
+              if player.reload.souls > 0
+                Soul.create({
+                  player: player,
+                  role:   role,
 
-                alive:  true,
-                health: Soul::STARTING_HEALTH,
-                level:  1,
-                age:    1,
+                  alive:  true,
+                  health: Soul::STARTING_HEALTH,
+                  level:  1,
+                  age:    1,
 
-                x:      rand(Soul.maximum :x) - rand(Soul.maximum :x),
-                y:      rand(Soul.maximum :y) - rand(Soul.maximum :y),
-              })
-              player.update_attribute :souls, player.souls - 1
+                  x:      rand(Soul.maximum :x) - rand(Soul.maximum :x),
+                  y:      rand(Soul.maximum :y) - rand(Soul.maximum :y),
+                })
+                player.update_attribute :souls, player.souls - 1
+              end
             end
 
-            m.reply "Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
+            m.reply "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
           end
         end
       end
@@ -102,7 +104,7 @@ namespace :irc do
 
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
-        m.reply "The oldest living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+        m.reply "The oldest living soul in this world is a L#{ssoul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
@@ -112,9 +114,9 @@ namespace :irc do
 
       on :message, LUI_MY_SOULS_INFO_REGEX do |m|
         player   = Player.find_or_initialize_by(name: m.user.nick)
-        rocks    = Soul.where(player: player, role: 'rock', alive: true)
-        papers   = Soul.where(player: player, role: 'paper', alive: true)
-        scissors = Soul.where(player: player, role: 'scissors', alive: true)
+        rocks    = Soul.where(player: player, role: 'rock', alive: true).order('level DESC')
+        papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
+        scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
 
         m.reply([
           "#{player.name}: You currently control #{rocks.count} rocks (",
@@ -152,13 +154,13 @@ namespace :irc do
               if soul.alive
                 messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
               else
-                messages << "#{soul.player.name}'s #{soul.role} has died!"
+                messages << "#{soul.player.name}'s #{soul.level} #{soul.role} has died!"
               end
 
               if other_soul.alive
                 messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
               else
-                messages << "#{other_soul.player.name}'s #{other_soul.role} has died!"
+                messages << "#{other_soul.player.name}'s #{soul.level} #{other_soul.role} has died!"
               end
 
               m.reply(messages.join ' ')

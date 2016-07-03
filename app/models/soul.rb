@@ -25,7 +25,7 @@ class Soul < ActiveRecord::Base
       damage /= 2 if other_soul.role.downcase == 'scissors'
     when 'scissors'
       damage *= 2 if other_soul.role.downcase == 'paper'
-      damage *= 2 if other_soul.role.downcase == 'rock'
+      damage /= 2 if other_soul.role.downcase == 'rock'
     end
 
     other_soul.update_attribute :health, other_soul.health - damage
