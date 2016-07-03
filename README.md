@@ -70,7 +70,7 @@ and then connect an IRC client to your favorite network and channel with
 rake irc:play
 ```
 
-You will need to customize the network/channel (and potentially nick) in lib/tasks/irc_client.rake
+You will need to customize the network/channel (and potentially nick) in `lib/tasks/irc_client.rake`
 
 Soon there will also be a web-based interface as well, with maps, scoreboards, and other information.
 To access it, you'll just need to run the server locally with
