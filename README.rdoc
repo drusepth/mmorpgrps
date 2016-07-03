@@ -55,24 +55,17 @@ Soon, scoreboards will be available online as well.
 To set up your own instance and world for the game, just check this repo out, create a
 database with
 
-```
-rake db:create
-rake db:migrate
-```
++rake db:create db:migrate+
 
 and then connect an IRC client to your favorite network and channel with
 
-```
-rake irc:play
-```
++rake irc:play+
 
 You will need to customize the network/channel (and potentially nick) in lib/tasks/irc_client.rake
 
 Soon there will also be a web-based interface as well, with maps, scoreboards, and other information.
 To access it, you'll just need to run the server locally with
 
-```
-rails server
-```
++rails server+
 
 and visit http://localhost:3000/ in your browser.
