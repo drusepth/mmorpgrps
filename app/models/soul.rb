@@ -68,6 +68,8 @@ class Soul < ActiveRecord::Base
       role: role,
       x: (x - VISION_RANGE)..(x + VISION_RANGE),
       y: (y - VISION_RANGE)..(y + VISION_RANGE)
+    ).where.not(
+      id: id
     )
 
     soul_to_swarm_to = faction_souls_nearby.sample
