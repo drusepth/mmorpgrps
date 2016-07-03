@@ -4,12 +4,34 @@ class Soul < ActiveRecord::Base
   STARTING_HEALTH = 100
 
   def age!
-    update_attribute age: (age + 1)
+    update_attribute :age, age + 1
   end
 
   def move!
     # TODO: logic
     move_randomly!
+  end
+
+  def attack! other_soul
+    damage = 50
+
+    case role.downcase
+    when 'rock'
+      damage *= 2 if other_soul.role.downcase == 'scissors'
+      damage /= 2 if other_soul.role.downcase == 'paper'
+    when 'paper'
+      damage *= 2 if other_soul.role.downcase == 'rock'
+      damage /= 2 if other_soul.role.downcase == 'scissors'
+    when 'scissors'
+      damage *= 2 if other_soul.role.downcase == 'paper'
+      damage *= 2 if other_soul.role.downcase == 'rock'
+    end
+
+    new_health = other_soul.health - damage
+    other_soul.update_attributes({
+      health: [new_health, 0].max,
+      alive:  new_health <= 0
+    })
   end
 
   private
