@@ -108,7 +108,7 @@ namespace :irc do
       end
 
       on :message, LUI_SOURCE_CODE_INFO_REGEX do |m|
-        m.reply "Source code here"
+        m.reply "The full source code for MMORPGRPS is available at https://github.com/drusepth/mmorpgrps. This client's source code is at https://github.com/drusepth/mmorpgrps/blob/master/lib/tasks/irc_client.rake"
       end
 
       on :message, GAME_TICK_REGEX do |m|
@@ -120,7 +120,7 @@ namespace :irc do
 
             other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
             other_souls_here.each do |other_soul|
-              #soul.attack! other_soul
+              soul.attack! other_soul
 
               messages = [
                 "#{soul.player.name}'s #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
