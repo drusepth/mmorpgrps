@@ -75,13 +75,22 @@ and then connect an IRC client to your favorite network and channel with
 rake irc:play
 ```
 
-You will need to customize the network/channel (and potentially nick) in `lib/tasks/irc_client.rake`
+You will need to customize the network/channel (and potentially nick) in `lib/tasks/irc_client.rake`.
 
-Soon there will also be a web-based interface as well, with maps, scoreboards, and other information.
-To access it, you'll just need to run the server locally with
+To run the web server, simply run:
 
 ```
 rails server
 ```
 
 and visit http://localhost:3000/ in your browser.
+
+There is a world map available at `localhost:3000/world/map`, and several scoreboards available at
+`localhost:3000/world/scoreboards`. In order for these pages to be available to others on your network,
+you can run the server bound to `0.0.0.0` instead, with
+
+```
+rails server -b 0.0.0.0
+```
+
+Happy RPS-ing!

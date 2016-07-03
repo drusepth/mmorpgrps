@@ -1,4 +1,4 @@
-<h1>Highest level</h1>
+<h1>Highest level (alive)</h1>
 <table width="600px" border=1>
 	<tr>
 		<th>Level</th>
@@ -18,7 +18,7 @@
 	<% end %>
 </table>
 
-<h1>Oldest</h1>
+<h1>Oldest (alive)</h1>
 <table width="600px" border=1>
 	<tr>
 		<th>Level</th>
@@ -38,7 +38,7 @@
 	<% end %>
 </table>
 
-<h1>Most health</h1>
+<h1>Most health (alive)</h1>
 <table width="600px" border=1>
 	<tr>
 		<th>Level</th>
@@ -54,6 +54,70 @@
 		<td><%= soul.player.name %></td>
 		<td><%= soul.age %></td>
 		<td><%= soul.health %> HP</td>
+	</tr>
+	<% end %>
+</table>
+
+<h1>Most free souls</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Player</th>
+		<th>Living souls</th>
+		<th>Free souls</th>
+		<th>Potential souls</th>
+	</tr>
+	<% Player.order('souls DESC').limit(10).each do |player| %>
+	<tr>
+		<td><%= player.name %></td>
+		<td><%= Soul.where(player: player, alive: true).count %></td>
+		<td><%= player.souls %></td>
+		<td><%= Soul.where(player: player, alive: true).count + player.souls %></td>
+	</tr>
+	<% end %>
+</table>
+
+<hr />
+
+<h1>Highest level (all time)</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Level</th>
+		<th>Faction</th>
+		<th>Player</th>
+		<th>Age</th>
+		<th>Health remaining</th>
+		<th>Alive?</th>
+	</tr>
+	<% Soul.order('level DESC, age DESC').limit(10).each do |soul| %>
+	<tr>
+		<td>L<%= soul.level %></td>
+		<td><%= soul.role %></td>
+		<td><%= soul.player.name %></td>
+		<td><%= soul.age %></td>
+		<td><%= soul.health %> HP</td>
+		<td><%= soul.alive %></td>
+	</tr>
+	<% end %>
+</table>
+
+<h1>Oldest (all time)</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Level</th>
+		<th>Faction</th>
+		<th>Player</th>
+		<th>Age</th>
+		<th>Health remaining</th>
+		<th>Alive?</th>
+	</tr>
+	<% Soul.order('age DESC, level DESC').limit(10).each do |soul| %>
+	<tr>
+		<td>L<%= soul.level %></td>
+		<td><%= soul.role %></td>
+		<td><%= soul.player.name %></td>
+		<td><%= soul.age %></td>
+		<td><%= soul.health %> HP</td>
+		<td><%= soul.alive %></td>
 	</tr>
 	<% end %>
 </table>
