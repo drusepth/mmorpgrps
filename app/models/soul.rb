@@ -59,10 +59,15 @@ class Soul < ActiveRecord::Base
     new_x_coord = x + (1 - rand(3))
     new_y_coord = y + (1 - rand(3))
 
-    self.x = new_x_coord
-    self.y = new_y_coord
+    update_attributes!({
+      x: new_x_coord,
+      y: new_y_coord
+    })
 
-    self.save!
+    # self.x = new_x_coord
+    # self.y = new_y_coord
+
+    # self.save!
   end
 
   def swarm_nearest_faction!
