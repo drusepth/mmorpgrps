@@ -40,7 +40,7 @@ Soon, the following additions will be in play:
 * Players will be able to choose where their knights spawn, allowing for more tactical
   spawns, better faction strongholds, and scoreboard-led assassination missions.
 
-And, of course, suggestions are welcome
+And, of course, suggestions are welcome!
 
 Scoring
 -------

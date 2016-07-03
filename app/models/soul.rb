@@ -9,7 +9,7 @@ class Soul < ActiveRecord::Base
   WEAK_ATTACK_DIVIDER      = 2
 
   def age!
-    update_attribute :age, age + 1
+    self.age = age + 1
   end
 
   def move!
@@ -31,8 +31,8 @@ class Soul < ActiveRecord::Base
       damage /= WEAK_ATTACK_DIVIDER      if other_soul.role.downcase == 'rock'
     end
 
-    other_soul.update_attribute :health, other_soul.health - damage
-    if other_soul.reload.health <= 0
+    other_soul.health = other_soul.health - damage
+    if other_soul.health <= 0
       level_up!
       other_soul.die!
     end
@@ -40,17 +40,13 @@ class Soul < ActiveRecord::Base
 
   def level_up!
     player.update_attribute :souls, player.souls + 1
-    update_attributes({
-      level: level + 1,
-      health: health + HEALTH_PER_LEVEL_UP
-    })
+    self.level += 1
+    self.health += HEALTH_PER_LEVEL_UP
   end
 
   def die!
-    update_attributes({
-      health: 0,
-      alive:  false
-    })
+    self.health = 0
+    self.alive = false
 
     # Refund the soul to its owner
     player.update_attribute :souls, player.souls + 1
@@ -62,10 +58,8 @@ class Soul < ActiveRecord::Base
     new_x_coord = x + (1 - rand(3))
     new_y_coord = y + (1 - rand(3))
 
-    update_attributes({
-      x: new_x_coord,
-      y: new_y_coord
-    })
+    self.x = new_x_coord
+    self.y = new_y_coord
   end
 
   def swarm_nearest_faction!
@@ -87,9 +81,7 @@ class Soul < ActiveRecord::Base
     new_y_coord += (1 - rand(2)) if soul_to_swarm_to.y > y
     new_y_coord -= (1 - rand(2)) if soul_to_swarm_to.y < y
 
-    update_attributes({
-      x: new_x_coord,
-      y: new_y_coord
-    })
+    self.x = new_x_coord
+    self.y = new_y_coord
   end
 end

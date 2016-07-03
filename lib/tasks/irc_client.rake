@@ -54,6 +54,7 @@ namespace :irc do
 
       on :message, LUI_SPAWN_REGEX do |m|
         player = Player.find_or_initialize_by(name: m.user.nick)
+        player.save
 
         m.message.scan(LUI_SPAWN_REGEX) do |quantity, role|
           quantity = 1 if quantity.nil?
@@ -138,37 +139,42 @@ namespace :irc do
       end
 
       on :message, GAME_TICK_REGEX do |m|
-          # Tick world forward
-          # TODO: Move game tick logic into WorldTickService
-          Soul.where(alive: true).each do |soul|
-            soul.age!
-            soul.move!
+        # Tick world forward
+        # TODO: Move game tick logic into WorldTickService
+        Soul.where(alive: true).each do |soul|
+          soul.age!
+          soul.move!
 
-            other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
-            other_souls_here.each do |other_soul|
-              soul.attack! other_soul
+          other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
+          other_souls_here.each do |other_soul|
+            soul.attack! other_soul
 
-              messages = [
-                "#{soul.player.name}'s L#{soul.level} #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
-              ]
-              if soul.alive
-                messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
-              else
-                messages << "#{soul.player.name}'s L#{soul.level} #{soul.role} has died!"
-              end
-
-              if other_soul.alive
-                messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
-              else
-                messages << "#{other_soul.player.name}'s L#{soul.level} #{other_soul.role} has died!"
-              end
-
-              m.reply(messages.join ' ')
+            messages = [
+              "#{soul.player.name}'s L#{soul.level} #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
+            ]
+            if soul.alive
+              messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
+            else
+              messages << "#{soul.player.name}'s L#{soul.level} #{soul.role} has died!"
             end
+
+            if other_soul.alive
+              messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
+            else
+              messages << "#{other_soul.player.name}'s L#{soul.level} #{other_soul.role} has died!"
+            end
+
+            m.reply(messages.join ' ')
+            other_soul.save if other_soul.changed?
+          end
+
+          if soul.changed?
+            soul.save
           end
         end
       end
-
-      bot.start
     end
+
+    bot.start
   end
+end
