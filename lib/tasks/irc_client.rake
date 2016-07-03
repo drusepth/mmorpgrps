@@ -13,7 +13,7 @@ namespace :irc do
     # TODO: Allow spawning at a specific location
     LUI_SPAWN_REGEX             = /spawn (\d+|a)? ?(rock|paper|scissor)s?/
 
-    LUI_HELP_INFO_REGEX         = /help/
+    LUI_HELP_INFO_REGEX         = /help|rules/
     LUI_WORLD_INFO_REGEX        = /world/
     LUI_LOCATIONS_INFO_REGEX    = /locations/
     LUI_SOURCE_CODE_INFO_REGEX  = /source/
@@ -55,6 +55,7 @@ namespace :irc do
         player = Player.find_or_initialize_by(name: m.user.nick)
 
         m.message.scan(LUI_SPAWN_REGEX) do |quantity, role|
+          quantity = 1 if quantity.nil?
           if quantity.to_i > player.souls
             m.reply "#{player.name}: You only have #{player.souls} souls to spawn with."
           else
@@ -76,7 +77,7 @@ namespace :irc do
               player.update_attribute :souls, player.souls - 1
             end
 
-            m.reply "Your #{quantity} #{role} have been spawned. The world now contains #{human_friendly_world_stats}."
+            m.reply "Your #{quantity} #{role} have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
           end
         end
       end
