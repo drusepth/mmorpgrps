@@ -12,7 +12,7 @@ var rocks = {
   mode: 'markers',
   type: 'scatter',
   name: 'Rock',
-  text: [<%= @rocks.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  text: [<%= @rocks.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
   marker: { size: 8 }
 };
 
@@ -22,7 +22,7 @@ var papers = {
   mode: 'markers',
   name: 'Paper',
   type: 'scatter',
-  text: [<%= @papers.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  text: [<%= @papers.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
   marker: { size: 8 }
 };
 
@@ -32,7 +32,7 @@ var scissors = {
   mode: 'markers',
   name: 'Scissors',
   type: 'scatter',
-  text: [<%= @scissors.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP'" }.join(', ').html_safe %>],
+  text: [<%= @scissors.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
   marker: { size: 8 }
 };
 
