@@ -74,7 +74,9 @@ class Soul < ActiveRecord::Base
       x: (x - VISION_RANGE)..(x + VISION_RANGE),
       y: (y - VISION_RANGE)..(y + VISION_RANGE)
     )
+
     soul_to_swarm_to = faction_souls_nearby.sample
+    return move_randomly! unless soul_to_swarm_to
 
     new_x_coord = x
     new_x_coord += (1 - rand(2)) if soul_to_swarm_to.x > x
