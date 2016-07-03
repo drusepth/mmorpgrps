@@ -1,10 +1,12 @@
-== MMORPGRPS
+MMORPGRPS
+=========
 
 A Massively Multiplayer Online Role Playing Game of Rock, Paper, Scissors
 
 Played over IRC with a linguistic user interface.
 
-== Rules of the game
+Rules of the game
+-----------------
 
 * Each player begins with 10 free souls, and can use any number of those souls to
   spawn knights of Rock, Paper, or Scissors into the world.
@@ -22,7 +24,8 @@ Played over IRC with a linguistic user interface.
   another knight with.
 * Whenever a knight dies, the knight that killed it levels up and gains 50 health.
 
-== Future rules
+Future rules
+------------
 
 Soon, the following additions will be in play:
 
@@ -33,7 +36,8 @@ Soon, the following additions will be in play:
 
 And, of course, suggestions are welcome
 
-== Scoring
+Scoring
+-------
 
 Currently, the following scoreboards are available to compete on:
 
@@ -50,7 +54,8 @@ scoreboards include "most kills", "distance traveled", "battles fought", and mor
 
 Soon, scoreboards will be available online as well.
 
-== Running the game
+Running the game
+----------------
 
 To set up your own instance and world for the game, just check this repo out, create a
 database with
