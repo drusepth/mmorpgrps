@@ -1,2 +1,59 @@
-<h1>World#scoreboards</h1>
-<p>Find me in app/views/world/scoreboards.html.erb</p>
+<h1>Highest level</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Level</th>
+		<th>Faction</th>
+		<th>Player</th>
+		<th>Age</th>
+		<th>Health remaining</th>
+	</tr>
+	<% Soul.where(alive: true).order('level DESC, age DESC').limit(10).each do |soul| %>
+	<tr>
+		<td>L<%= soul.level %></td>
+		<td><%= soul.role %></td>
+		<td><%= soul.player.name %></td>
+		<td><%= soul.age %></td>
+		<td><%= soul.health %> HP</td>
+	</tr>
+	<% end %>
+</table>
+
+<h1>Oldest</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Level</th>
+		<th>Faction</th>
+		<th>Player</th>
+		<th>Age</th>
+		<th>Health remaining</th>
+	</tr>
+	<% Soul.where(alive: true).order('age DESC, level DESC').limit(10).each do |soul| %>
+	<tr>
+		<td>L<%= soul.level %></td>
+		<td><%= soul.role %></td>
+		<td><%= soul.player.name %></td>
+		<td><%= soul.age %></td>
+		<td><%= soul.health %> HP</td>
+	</tr>
+	<% end %>
+</table>
+
+<h1>Most health</h1>
+<table width="600px" border=1>
+	<tr>
+		<th>Level</th>
+		<th>Faction</th>
+		<th>Player</th>
+		<th>Age</th>
+		<th>Health remaining</th>
+	</tr>
+	<% Soul.where(alive: true).order('health DESC, level DESC, age DESC').limit(10).each do |soul| %>
+	<tr>
+		<td>L<%= soul.level %></td>
+		<td><%= soul.role %></td>
+		<td><%= soul.player.name %></td>
+		<td><%= soul.age %></td>
+		<td><%= soul.health %> HP</td>
+	</tr>
+	<% end %>
+</table>
