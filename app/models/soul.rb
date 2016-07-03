@@ -1,33 +1,34 @@
 class Soul < ActiveRecord::Base
   belongs_to :player
 
-  STARTING_HEALTH = 100
-  HEALTH_PER_LEVEL_UP = 50
-  VISION_RANGE = 5
+  STARTING_HEALTH          = 100
+  HEALTH_PER_LEVEL_UP      = 50
+  VISION_RANGE             = 2
+  BASE_ATTACK_DAMAGE       = 50
+  STRONG_ATTACK_MULTIPLIER = 2
+  WEAK_ATTACK_DIVIDER      = 2
 
   def age!
     update_attribute :age, age + 1
   end
 
   def move!
-    # TODO: logic
-    #move_randomly!
     swarm_nearest_faction!
   end
 
   def attack! other_soul
-    damage = 50
+    damage = BASE_ATTACK_DAMAGE
 
     case role.downcase
     when 'rock'
-      damage *= 2 if other_soul.role.downcase == 'scissors'
-      damage /= 2 if other_soul.role.downcase == 'paper'
+      damage *= STRONG_ATTACK_MULTIPLIER if other_soul.role.downcase == 'scissors'
+      damage /= WEAK_ATTACK_DIVIDER      if other_soul.role.downcase == 'paper'
     when 'paper'
-      damage *= 2 if other_soul.role.downcase == 'rock'
-      damage /= 2 if other_soul.role.downcase == 'scissors'
+      damage *= STRONG_ATTACK_MULTIPLIER if other_soul.role.downcase == 'rock'
+      damage /= WEAK_ATTACK_DIVIDER      if other_soul.role.downcase == 'scissors'
     when 'scissors'
-      damage *= 2 if other_soul.role.downcase == 'paper'
-      damage /= 2 if other_soul.role.downcase == 'rock'
+      damage *= STRONG_ATTACK_MULTIPLIER if other_soul.role.downcase == 'paper'
+      damage /= WEAK_ATTACK_DIVIDER      if other_soul.role.downcase == 'rock'
     end
 
     other_soul.update_attribute :health, other_soul.health - damage
@@ -51,7 +52,7 @@ class Soul < ActiveRecord::Base
       alive:  false
     })
 
-    # Return the soul to its owner
+    # Refund the soul to its owner
     player.update_attribute :souls, player.souls + 1
   end
 

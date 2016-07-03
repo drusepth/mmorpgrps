@@ -14,7 +14,7 @@ var data = [];
 		y: [<%= souls.map(&:y).join(', ') %>],
 		mode: 'markers',
 		type: 'scatter',
-		name: '<%= player.name %>',
+		name: '<%= player.name %> (<%= souls.count %>)',
 		text: [<%= souls.map { |s| "'#{player.name}s L#{s.level} (#{s.role}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
 		marker: { size: 8 }
 	}

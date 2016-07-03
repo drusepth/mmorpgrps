@@ -6,6 +6,7 @@
 		<th>Player</th>
 		<th>Age</th>
 		<th>Health remaining</th>
+		<th>Location</th>
 	</tr>
 	<% Soul.where(alive: true).order('level DESC, age DESC').limit(10).each do |soul| %>
 	<tr>
@@ -14,6 +15,7 @@
 		<td><%= soul.player.name %></td>
 		<td><%= soul.age %></td>
 		<td><%= soul.health %> HP</td>
+		<td>(<%= soul.x %>, <%= soul.y %>)</td>
 	</tr>
 	<% end %>
 </table>
@@ -26,6 +28,7 @@
 		<th>Player</th>
 		<th>Age</th>
 		<th>Health remaining</th>
+		<th>Location</th>
 	</tr>
 	<% Soul.where(alive: true).order('age DESC, level DESC').limit(10).each do |soul| %>
 	<tr>
@@ -34,6 +37,7 @@
 		<td><%= soul.player.name %></td>
 		<td><%= soul.age %></td>
 		<td><%= soul.health %> HP</td>
+		<td>(<%= soul.x %>, <%= soul.y %>)</td>
 	</tr>
 	<% end %>
 </table>
@@ -46,6 +50,7 @@
 		<th>Player</th>
 		<th>Age</th>
 		<th>Health remaining</th>
+		<th>Location</th>
 	</tr>
 	<% Soul.where(alive: true).order('health DESC, level DESC, age DESC').limit(10).each do |soul| %>
 	<tr>
@@ -54,6 +59,7 @@
 		<td><%= soul.player.name %></td>
 		<td><%= soul.age %></td>
 		<td><%= soul.health %> HP</td>
+		<td>(<%= soul.x %>, <%= soul.y %>)</td>
 	</tr>
 	<% end %>
 </table>

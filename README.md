@@ -15,8 +15,11 @@ Rules of the game
 * For the time being, knights are spawned randomly within the bounding box of the
   outer-most knights in each direction of the world.
 * The game ticks time forward  with every message sent over IRC, whether related
-  to the game or not. During each tick, every knight ages, moves randomly, and attacks
-  all other knights owned by other players nearby.
+  to the game or not. During each tick, every knight ages, moves, and attacks all
+  other knights owned by other players nearby.
+* Rather than randomly moving around the world, knights seek out their own factions
+  and travel in packs of varying sizes. When friendly factions aren't nearby, knights
+  will move randomly until they find friends.
 * Knights never attack their own faction, however. Scissors won't attack scissors,
   paper won't attack paper, and rock won't attack rock.
 * Knights start out with 100 HP, and super-effective attacks (e.g. paper to rock) deal
@@ -36,8 +39,6 @@ Soon, the following additions will be in play:
 
 * Players will be able to choose where their knights spawn, allowing for more tactical
   spawns, better faction strongholds, and scoreboard-led assassination missions.
-* Rather than randomly moving around the world, knights will seek out their own factions
-  and travel in packs of varying sizes.
 
 And, of course, suggestions are welcome
 
