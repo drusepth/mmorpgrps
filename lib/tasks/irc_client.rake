@@ -104,7 +104,7 @@ namespace :irc do
 
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
-        m.reply "The oldest living soul in this world is a L#{ssoul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+        m.reply "The oldest living soul in this world is a L#{soul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
