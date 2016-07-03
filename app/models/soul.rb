@@ -61,6 +61,8 @@ class Soul < ActiveRecord::Base
 
     self.x = new_x_coord
     self.y = new_y_coord
+
+    self.save!
   end
 
   def swarm_nearest_faction!
