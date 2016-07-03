@@ -3,6 +3,7 @@ class Soul < ActiveRecord::Base
 
   STARTING_HEALTH = 100
   HEALTH_PER_LEVEL_UP = 50
+  VISION_RANGE = 5
 
   def age!
     update_attribute :age, age + 1
@@ -10,7 +11,8 @@ class Soul < ActiveRecord::Base
 
   def move!
     # TODO: logic
-    move_randomly!
+    #move_randomly!
+    swarm_nearest_faction!
   end
 
   def attack! other_soul
@@ -58,6 +60,29 @@ class Soul < ActiveRecord::Base
   def move_randomly!
     new_x_coord = x + (1 - rand(3))
     new_y_coord = y + (1 - rand(3))
+
+    update_attributes({
+      x: new_x_coord,
+      y: new_y_coord
+    })
+  end
+
+  def swarm_nearest_faction!
+    faction_souls_nearby = Soul.where(
+      alive: true,
+      role: role,
+      x: (x - VISION_RANGE)..(x + VISION_RANGE),
+      y: (y - VISION_RANGE)..(y + VISION_RANGE)
+    )
+    soul_to_swarm_to = faction_souls_nearby.sample
+
+    new_x_coord = x
+    new_x_coord += (1 - rand(2)) if soul_to_swarm_to.x > x
+    new_x_coord -= (1 - rand(2)) if soul_to_swarm_to.x < x
+
+    new_y_coord = y
+    new_y_coord += (1 - rand(2)) if soul_to_swarm_to.y > y
+    new_y_coord -= (1 - rand(2)) if soul_to_swarm_to.y < y
 
     update_attributes({
       x: new_x_coord,
