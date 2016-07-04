@@ -20,7 +20,7 @@ class Soul < ActiveRecord::Base
   def attack! other_soul
     damage = BASE_ATTACK_DAMAGE
 
-    case role.downcase
+    case role.split(' ').first.downcase
     when 'rock'
       damage *= STRONG_ATTACK_MULTIPLIER if other_soul.role.downcase == 'scissors'
       damage /= WEAK_ATTACK_DIVIDER      if other_soul.role.downcase == 'paper'
