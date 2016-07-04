@@ -20,6 +20,18 @@ var data = [];
 	}
 	data = data.concat(player<%= player.id %>);
 <% end %>
+var layout = {
+  xaxis: {
+    title: 'X coordinate'
+  },
+  yaxis: {
+    title: 'Y coordinate'
+  },
+  margin: {
+    t: 20
+  },
+  hovermode: 'closest'
+};
 
-Plotly.newPlot('map', data);
+Plotly.newPlot('map', data, layout);
 </script>

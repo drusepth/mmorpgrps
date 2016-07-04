@@ -38,5 +38,18 @@ var scissors = {
 
 var data = [rocks, papers, scissors];
 
-Plotly.newPlot('map', data);
+var layout = {
+  xaxis: {
+    title: 'X coordinate'
+  },
+  yaxis: {
+    title: 'Y coordinate'
+  },
+  margin: {
+    t: 20
+  },
+  hovermode: 'closest'
+};
+
+Plotly.newPlot('map', data, layout);
 </script>
