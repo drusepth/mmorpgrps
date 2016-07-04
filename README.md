@@ -25,7 +25,7 @@ Rules of the game
   will move randomly until they find friends.
 * Knights never attack their own faction, however. Scissors won't attack scissors,
   paper won't attack paper, and rock won't attack rock.
-* During each tick of the game, there is a 5% chance that an Evil Giant will spawn
+* During each tick of the game, there is a small chance that an Evil Giant will spawn
   as a Rock Giant / Paper Giant / Scissors Giant. These giants can be attacked by
   any faction, and reward 5 bonus souls to the player that lands the killing blow on them.
 * Knights start out with 100 HP, and super-effective attacks (e.g. paper to rock) deal
