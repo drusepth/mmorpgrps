@@ -13,8 +13,8 @@ class Soul < ActiveRecord::Base
   end
 
   def move!
-    move_randomly!
-    #swarm_nearest_faction!
+    #move_randomly!
+    swarm_nearest_faction!
   end
 
   def attack! other_soul
@@ -91,7 +91,11 @@ class Soul < ActiveRecord::Base
     new_y_coord += (1 - rand(2)) if soul_to_swarm_to.y > y
     new_y_coord -= (1 - rand(2)) if soul_to_swarm_to.y < y
 
-    self.x = new_x_coord
-    self.y = new_y_coord
+    # self.x = new_x_coord
+    # self.y = new_y_coord
+    update_attributes!({
+      x: new_x_coord,
+      y: new_y_coord
+    })
   end
 end
