@@ -35,9 +35,10 @@ namespace :irc do
         'Dead souls'       => Soul.where(alive: false).count,
         'Free souls'       => Player.sum(:souls),
         'Players'          => Player.count,
-        'Rocks'            => Soul.where(role: 'rock').count,
-        'Papers'           => Soul.where(role: 'paper').count,
-        'Scissors'         => Soul.where(role: 'scissor').count,
+        'Rocks'            => Soul.where(alive: true, role: 'rock').count,
+        'Papers'           => Soul.where(alive: true, role: 'paper').count,
+        'Scissors'         => Soul.where(alive: true, role: 'scissor').count,
+        'Giants'           => Soul.where(alive: true, role: ['rock giant', 'paper giant', 'scissors giant']),
         'Average soul age' => Soul.average(:age).to_i
       }
     end
