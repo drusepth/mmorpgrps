@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160703025308) do
+ActiveRecord::Schema.define(version: 20160704013442) do
 
   create_table "players", force: :cascade do |t|
     t.string   "name"
@@ -27,10 +27,11 @@ ActiveRecord::Schema.define(version: 20160703025308) do
     t.integer  "y"
     t.float    "health"
     t.integer  "level"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.integer  "age"
     t.integer  "player_id"
+    t.integer  "soul_bounty", default: 0
   end
 
   add_index "souls", ["player_id"], name: "index_souls_on_player_id"

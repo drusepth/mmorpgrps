@@ -36,7 +36,17 @@ var scissors = {
   marker: { size: 8 }
 };
 
-var data = [rocks, papers, scissors];
+var giants = {
+  x: [<%= @giants.map(&:x).join(', ') %>],
+  y: [<%= @giants.map(&:y).join(', ') %>],
+  mode: 'markers',
+  name: 'Giants (<%= @giants.count %>)',
+  type: 'scatter',
+  text: [<%= @giants.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
+  marker: { size: 8 }
+};
+
+var data = [rocks, papers, scissors, giants];
 
 var layout = {
   xaxis: {
