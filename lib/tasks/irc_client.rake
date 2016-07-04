@@ -184,6 +184,54 @@ namespace :irc do
         ActiveRecord::Base.transaction do
           souls.each { |soul| soul.save if soul.changed? }
         end
+
+        # Maybe spawn a boss or something
+        if rand(20) == 0
+          s = Soul.create({
+            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            role:   'rock giant',
+
+            alive:  true,
+            health: Soul::STARTING_HEALTH * 5,
+            level:  5,
+            age:    1,
+            soul_bounty: 5,
+
+            x:      rand(20) - rand(20),
+            y:      rand(20) - rand(20),
+          })
+          m.reply "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+        elsif rand(20) == 0
+          s = Soul.create({
+            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            role:   'paper giant',
+
+            alive:  true,
+            health: Soul::STARTING_HEALTH * 5,
+            level:  5,
+            age:    1,
+            soul_bounty: 5,
+
+            x:      rand(20) - rand(20),
+            y:      rand(20) - rand(20),
+          })
+          m.reply "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+        elsif rand(20) == 0
+          s = Soul.create({
+            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            role:   'paper giant',
+
+            alive:  true,
+            health: Soul::STARTING_HEALTH * 5,
+            level:  5,
+            age:    1,
+            soul_bounty: 5,
+
+            x:      rand(20) - rand(20),
+            y:      rand(20) - rand(20),
+          })
+          m.reply "An evil scissors giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+        end
       end
     end
 

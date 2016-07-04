@@ -36,6 +36,11 @@ class Soul < ActiveRecord::Base
     if other_soul.health <= 0
       level_up!
       other_soul.die!
+
+      # Claim soul bounties
+      if other_soul.soul_bounty > 0
+        player.update_attribute :souls, player.souls + other_soul.soul_bounty
+      end
     end
   end
 
