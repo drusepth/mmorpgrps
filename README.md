@@ -5,6 +5,9 @@ A Massively Multiplayer Online Role Playing Game of Rock, Paper, Scissors
 
 Played over IRC with a linguistic user interface.
 
+* [View the live world map here](https://polar-spire-49459.herokuapp.com/world/map)
+* [View the live scoreboards here](https://polar-spire-49459.herokuapp.com/world/scoreboards)
+
 Rules of the game
 -----------------
 
