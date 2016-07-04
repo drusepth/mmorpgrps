@@ -42,7 +42,7 @@ var giants = {
   mode: 'markers',
   name: 'Giants (<%= @giants.count %>)',
   type: 'scatter',
-  text: [<%= @giants.map { |s| "'L#{s.level} (#{s.player.name}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
+  text: [<%= @giants.map { |s| "'L#{s.level} (#{s.role.titleize}), #{s.health} HP, age #{s.age}'" }.join(', ').html_safe %>],
   marker: { size: 8 }
 };
 
