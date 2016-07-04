@@ -15,11 +15,13 @@ namespace :irc do
     LUI_SPAWN_REGEX             = /spawn (\d+|a)? ?(rock|paper|scissor)s?/
 
     LUI_HELP_INFO_REGEX         = /help|rules/
-    LUI_WORLD_INFO_REGEX        = /world/
+    LUI_MAP_INFO_REGEX          = /map/
     LUI_LOCATIONS_INFO_REGEX    = /locations/
     LUI_SOURCE_CODE_INFO_REGEX  = /source/
     LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
     LUI_MY_SOULS_INFO_REGEX     = /my stats/
+    LUI_WORLD_INFO_REGEX        = /world/
+    LUI_SCOREBOARDS_INFO_REGEX  = /scoreboards/
 
     LUI_OLDEST_SCOREBOARD_REGEX = /oldest/
     LUI_LEVEL_SCOREBOARD_REGEX  = /level|kills?|strongest/
@@ -133,6 +135,14 @@ namespace :irc do
 
       on :message, LUI_LOCATIONS_INFO_REGEX do |m|
         m.reply "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
+      end
+
+      on :message, LUI_MAP_INFO_REGEX do |m|
+        m.reply "The world map is available here: https://polar-spire-49459.herokuapp.com/world/map"
+      end
+
+      on :message, LUI_SCOREBOARDS_INFO_REGEX do |m|
+        m.reply "Live scoreboards are available here: https://polar-spire-49459.herokuapp.com/world/scoreboards"
       end
 
       on :message, LUI_SOURCE_CODE_INFO_REGEX do |m|
