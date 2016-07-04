@@ -77,7 +77,7 @@ class Soul < ActiveRecord::Base
       x: (x - VISION_RANGE)..(x + VISION_RANGE),
       y: (y - VISION_RANGE)..(y + VISION_RANGE)
     ).where.not(
-      id: id
+      id: id,
       x: x,
       y: y
     )
