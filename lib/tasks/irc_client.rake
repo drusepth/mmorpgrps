@@ -4,9 +4,10 @@ namespace :irc do
     require 'cinch'
 
     config = {
-      network:  'irc.amazdong.com',
-      channel:  '#rps',
-      nick:     'RPSGM'
+      network:             'irc.wobscale.website',
+      channel:             '#rps',
+      nick:                'RPSGM',
+      messages_per_second: 10,
     }
 
     # TODO: Define these elsewhere
@@ -28,14 +29,14 @@ namespace :irc do
 
     def world_stats
       {
-        'Living souls':     Soul.where(alive: true).count,
-        'Dead souls':       Soul.where(alive: false).count,
-        'Free souls':       Player.sum(:souls),
-        'Players':          Player.count,
-        'Rocks':            Soul.where(role: 'rock').count,
-        'Papers':           Soul.where(role: 'paper').count,
-        'Scissors':         Soul.where(role: 'scissor').count,
-        'Average soul age': Soul.average(:age).to_i
+        'Living souls'     => Soul.where(alive: true).count,
+        'Dead souls'       => Soul.where(alive: false).count,
+        'Free souls'       => Player.sum(:souls),
+        'Players'          => Player.count,
+        'Rocks'            => Soul.where(role: 'rock').count,
+        'Papers'           => Soul.where(role: 'paper').count,
+        'Scissors'         => Soul.where(role: 'scissor').count,
+        'Average soul age' => Soul.average(:age).to_i
       }
     end
 
@@ -48,6 +49,7 @@ namespace :irc do
         c.server   = config[:network]
         c.channels = ['#aw', config[:channel]]
         c.nick     = config[:nick]
+        c.messages_per_second = config[:messages_per_second]
       end
 
       # TODO: Put all this logic in some SpawnerService and just pass raw text in
