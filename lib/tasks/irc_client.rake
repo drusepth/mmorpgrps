@@ -75,8 +75,8 @@ namespace :irc do
                   level:  1,
                   age:    1,
 
-                  x:      rand(Soul.maximum :x) - rand(Soul.maximum :x),
-                  y:      rand(Soul.maximum :y) - rand(Soul.maximum :y),
+                  x:      rand(Soul.maximum :x) - rand(Soul.maximum :x) + rand(20) - rand(20),
+                  y:      rand(Soul.maximum :y) - rand(Soul.maximum :y) + rand(20) - rand(20),
                 }
               })
               player.update_attribute :souls, player.souls - quantity.to_i
