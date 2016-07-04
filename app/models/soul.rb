@@ -3,7 +3,7 @@ class Soul < ActiveRecord::Base
 
   STARTING_HEALTH          = 100
   HEALTH_PER_LEVEL_UP      = 50
-  VISION_RANGE             = 2
+  VISION_RANGE             = 1
   BASE_ATTACK_DAMAGE       = 50
   STRONG_ATTACK_MULTIPLIER = 2
   WEAK_ATTACK_DIVIDER      = 2
