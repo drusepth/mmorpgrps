@@ -21,7 +21,7 @@ namespace :irc do
     LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
     LUI_MY_SOULS_INFO_REGEX     = /my stats/
     LUI_WORLD_INFO_REGEX        = /world/
-    LUI_SCOREBOARDS_INFO_REGEX  = /scoreboards/
+    LUI_SCOREBOARDS_INFO_REGEX  = /score/
 
     LUI_OLDEST_SCOREBOARD_REGEX = /oldest/
     LUI_LEVEL_SCOREBOARD_REGEX  = /level|kills?|strongest/
