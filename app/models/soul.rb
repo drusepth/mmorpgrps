@@ -3,7 +3,7 @@ class Soul < ActiveRecord::Base
 
   STARTING_HEALTH          = 100
   HEALTH_PER_LEVEL_UP      = 50
-  VISION_RANGE             = 1
+  VISION_RANGE             = 5
   BASE_ATTACK_DAMAGE       = 50
   STRONG_ATTACK_MULTIPLIER = 2
   WEAK_ATTACK_DIVIDER      = 2
@@ -14,7 +14,8 @@ class Soul < ActiveRecord::Base
 
   def move!
     #move_randomly!
-    swarm_nearest_faction!
+    #swarm_nearest_faction!
+    swarm_nearest_soul!
   end
 
   def attack! other_soul
@@ -100,6 +101,34 @@ class Soul < ActiveRecord::Base
 
     # self.x = new_x_coord
     # self.y = new_y_coord
+    update_attributes!({
+      x: new_x_coord,
+      y: new_y_coord
+    })
+  end
+
+  def swarm_nearest_soul!
+    souls_nearby = Soul.where(
+      alive: true,
+      x: (x - VISION_RANGE)..(x + VISION_RANGE),
+      y: (y - VISION_RANGE)..(y + VISION_RANGE)
+    ).where.not(
+      id: id,
+      x: x,
+      y: y
+    )
+
+    soul_to_swarm_to = souls_nearby.sample
+    return move_randomly! unless soul_to_swarm_to.present?
+
+    new_x_coord = x
+    new_x_coord += (1 - rand(2)) if soul_to_swarm_to.x > x
+    new_x_coord -= (1 - rand(2)) if soul_to_swarm_to.x < x
+
+    new_y_coord = y
+    new_y_coord += (1 - rand(2)) if soul_to_swarm_to.y > y
+    new_y_coord -= (1 - rand(2)) if soul_to_swarm_to.y < y
+
     update_attributes!({
       x: new_x_coord,
       y: new_y_coord
