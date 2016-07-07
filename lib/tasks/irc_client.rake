@@ -127,15 +127,15 @@ namespace :irc do
         rocks    = Soul.where(player: player, role: 'rock', alive: true).order('level DESC')
         papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
         scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
+        highest  = Soul.where(player: player).order('level DESC').first
+        oldest   = Soul.where(player: player).order('age DESC').first
 
         report m, ([
-          "#{player.name}: You currently control #{rocks.count} rocks (",
-          rocks.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
-          "), #{papers.count} papers (",
-          papers.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
-          "), and #{scissors.count} scissors (",
-          scissors.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
-          ")."
+          "#{player.name}: You currently control #{rocks.count} rocks, ",
+          "#{papers.count} papers, ",
+          "and #{scissors.count} scissors. ",
+          "Your highest level soul is an L#{highest.level} #{highest.role} with #{highest.health}HP at (#{highest.x}, #{highest.y}). ",
+          "Your oldest is an L#{oldest.level} #{oldest.role}, #{oldest.health}HP, age #{oldest.age} at (#{oldest.x}, #{oldest.y})."
         ].join)
       end
 
