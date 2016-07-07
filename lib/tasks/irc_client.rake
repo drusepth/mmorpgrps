@@ -174,7 +174,7 @@ namespace :irc do
             if other_soul.alive
               messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
             else
-              messages << "#{other_soul.player.name}'s L#{soul.level} #{other_soul.role} has died!"
+              messages << "#{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} has died!"
             end
 
             m.reply(messages.join ' ')
