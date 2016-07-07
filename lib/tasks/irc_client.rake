@@ -47,6 +47,11 @@ namespace :irc do
       world_stats.map { |item, quantity| "#{quantity} #{item.downcase}" }.to_sentence
     end
 
+    def report m, message
+      message = Format(:grey, message)
+      m.reply message
+    end
+
     bot = Cinch::Bot.new do
       configure do |c|
         c.server   = config[:network]
@@ -177,7 +182,7 @@ namespace :irc do
               messages << "#{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} has died!"
             end
 
-            m.reply(messages.join ' ')
+            report m, messages.join(' ')
             other_soul.save if other_soul.changed?
           end
         end
