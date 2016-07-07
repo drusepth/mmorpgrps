@@ -20,7 +20,7 @@ namespace :irc do
     LUI_SOURCE_CODE_INFO_REGEX  = /source/
     LUI_SOUL_COUNT_INFO_REGEX   = /souls?/
     LUI_MY_SOULS_INFO_REGEX     = /my stats/
-    LUI_PLAYER_STATS_INFO_REGEX = /(\w)+'s stats/
+    LUI_PLAYER_STATS_INFO_REGEX = /(\w+)'s stats/
     LUI_WORLD_INFO_REGEX        = /world/
     LUI_SCOREBOARDS_INFO_REGEX  = /score/
 
@@ -142,7 +142,7 @@ namespace :irc do
 
       on :message, LUI_PLAYER_STATS_INFO_REGEX do |m|
         m.message.scan(LUI_PLAYER_STATS_INFO_REGEX) do |player_name|
-          player   = Player.find_or_initialize_by(name: player_name)
+          player   = Player.find_or_initialize_by(name: player_name.first)
           rocks    = Soul.where(player: player, role: 'rock', alive: true).order('level DESC')
           papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
           scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
@@ -150,7 +150,7 @@ namespace :irc do
           oldest   = Soul.where(player: player).order('age DESC').first
 
           report m, ([
-            "#{m.user.nick}: #{player_name} currently controls #{rocks.count} rocks, ",
+            "#{m.user.nick}: #{player_name.first} currently controls #{rocks.count} rocks, ",
             "#{papers.count} papers, ",
             "and #{scissors.count} scissors. ",
             "Their highest level soul is an L#{highest.level} #{highest.role} with #{highest.health}HP at (#{highest.x}, #{highest.y}). ",
