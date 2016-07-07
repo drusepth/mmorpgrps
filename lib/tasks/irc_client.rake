@@ -48,7 +48,7 @@ namespace :irc do
     end
 
     def report m, message
-      message = Format(:grey, message)
+      message = Format(:pink, message)
       m.reply message
     end
 
@@ -68,7 +68,7 @@ namespace :irc do
         m.message.scan(LUI_SPAWN_REGEX) do |quantity, role|
           quantity = 1 if quantity.nil?
           if quantity.to_i > player.souls
-            m.reply "#{player.name}: You only have #{player.souls} souls to spawn with."
+            report m, "#{player.name}: You only have #{player.souls} souls to spawn with."
           else
             puts "Spawning #{quantity} #{role}"
 
@@ -90,13 +90,13 @@ namespace :irc do
               player.update_attribute :souls, player.souls - quantity.to_i
             end
 
-            m.reply "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
+            report m, "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
           end
         end
       end
 
       on :message, LUI_HELP_INFO_REGEX do |m|
-        m.reply([
+        report m, ([
           "Welcome to the war-torn world of rock, paper, scissors!",
           "Every time someone says something on IRC, time ticks forward. Rocks kill scissors, scissors kill paper, and paper kills rock.",
           "Spawn your knights by telling me 'spawn 3 rocks' or 'span 1 scissors' and regain the land for your faction!"
@@ -104,22 +104,22 @@ namespace :irc do
       end
 
       on :message, LUI_WORLD_INFO_REGEX do |m|
-        m.reply "The world contains #{human_friendly_world_stats}."
+        report m, "The world contains #{human_friendly_world_stats}."
       end
 
       on :message, LUI_SOUL_COUNT_INFO_REGEX do |m|
         player = Player.find_or_initialize_by(name: m.user.nick)
-        m.reply "#{m.user.nick}: You have #{player.souls} soul(s) remaining. You can use them to spawn knights of Rock, Paper, or Scissors into the world. Just say something like 'spawn 5 rocks' or 'spawn 1 scissors'."
+        report m, "#{m.user.nick}: You have #{player.souls} soul(s) remaining. You can use them to spawn knights of Rock, Paper, or Scissors into the world. Just say something like 'spawn 5 rocks' or 'spawn 1 scissors'."
       end
 
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('age DESC').first
-        m.reply "The oldest living soul in this world is a L#{soul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+        report m, "The oldest living soul in this world is a L#{soul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
         soul = Soul.where(alive: true).order('level DESC').first
-        m.reply "The highest level living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That level #{soul.level} #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
+        report m, "The highest level living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That level #{soul.level} #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_MY_SOULS_INFO_REGEX do |m|
@@ -128,7 +128,7 @@ namespace :irc do
         papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
         scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
 
-        m.reply([
+        report m, ([
           "#{player.name}: You currently control #{rocks.count} rocks (",
           rocks.dup.map { |r| "L#{r.level} at (#{r.x},#{r.y})" }.to_sentence,
           "), #{papers.count} papers (",
@@ -140,19 +140,19 @@ namespace :irc do
       end
 
       on :message, LUI_LOCATIONS_INFO_REGEX do |m|
-        m.reply "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
+        report m, "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
       end
 
       on :message, LUI_MAP_INFO_REGEX do |m|
-        m.reply "The world map is available here: https://polar-spire-49459.herokuapp.com/world/map"
+        report m, "The world map is available here: https://polar-spire-49459.herokuapp.com/world/map"
       end
 
       on :message, LUI_SCOREBOARDS_INFO_REGEX do |m|
-        m.reply "Live scoreboards are available here: https://polar-spire-49459.herokuapp.com/world/scoreboards"
+        report m, "Live scoreboards are available here: https://polar-spire-49459.herokuapp.com/world/scoreboards"
       end
 
       on :message, LUI_SOURCE_CODE_INFO_REGEX do |m|
-        m.reply "The full source code for MMORPGRPS is available at https://github.com/drusepth/mmorpgrps. This client's source code is at https://github.com/drusepth/mmorpgrps/blob/master/lib/tasks/irc_client.rake"
+        report m, "The full source code for MMORPGRPS is available at https://github.com/drusepth/mmorpgrps. This client's source code is at https://github.com/drusepth/mmorpgrps/blob/master/lib/tasks/irc_client.rake"
       end
 
       on :message, GAME_TICK_REGEX do |m|
@@ -206,7 +206,7 @@ namespace :irc do
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })
-          m.reply "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+          report m, "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
         elsif rand(50) == 0
           s = Soul.create({
             player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
@@ -221,7 +221,7 @@ namespace :irc do
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })
-          m.reply "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+          report m, "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
         elsif rand(50) == 0
           s = Soul.create({
             player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
@@ -236,7 +236,7 @@ namespace :irc do
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })
-          m.reply "An evil scissors giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+          report m, "An evil scissors giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
         end
       end
     end
@@ -244,3 +244,4 @@ namespace :irc do
     bot.start
   end
 end
+
