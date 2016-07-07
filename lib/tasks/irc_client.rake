@@ -192,7 +192,7 @@ namespace :irc do
         end
 
         # Maybe spawn a boss or something
-        if rand(50) == 0
+        if rand(100) == 0
           s = Soul.create({
             player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
             role:   'rock giant',
@@ -207,7 +207,7 @@ namespace :irc do
             y:      rand(20) - rand(20),
           })
           report m, "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
-        elsif rand(50) == 0
+        elsif rand(100) == 0
           s = Soul.create({
             player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
             role:   'paper giant',
@@ -222,7 +222,7 @@ namespace :irc do
             y:      rand(20) - rand(20),
           })
           report m, "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
-        elsif rand(50) == 0
+        elsif rand(100) == 0
           s = Soul.create({
             player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
             role:   'paper giant',
