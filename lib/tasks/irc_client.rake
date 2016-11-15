@@ -188,54 +188,19 @@ namespace :play do
         end
 
         # Maybe spawn a boss or something
-        if rand(100) == 0
-          s = Soul.create({
+        if rand(500) == 0
+          giant = SpawnService.spawn(quantity: 1,
+            role: %w(rock paper scissors).sample + ' giant',
             player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
-            role:   'rock giant',
+            world: $world,
+            attributes: {
+              level:       5,
+              health:      Soul::STARTING_HEALTH * 3,
+              soul_bounty: 5
+            }
+          ).first
 
-            alive:  true,
-            health: Soul::STARTING_HEALTH * 3,
-            level:  5,
-            age:    1,
-            soul_bounty: 5,
-
-            world:  $world,
-            x:      rand(20) - rand(20),
-            y:      rand(20) - rand(20),
-          })
-          report m, "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
-        elsif rand(100) == 0
-          s = Soul.create({
-            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
-            role:   'paper giant',
-
-            alive:  true,
-            health: Soul::STARTING_HEALTH * 3,
-            level:  5,
-            age:    1,
-            soul_bounty: 5,
-
-            world:  $world,
-            x:      rand(20) - rand(20),
-            y:      rand(20) - rand(20),
-          })
-          report m, "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
-        elsif rand(100) == 0
-          s = Soul.create({
-            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
-            role:   'paper giant',
-
-            alive:  true,
-            health: Soul::STARTING_HEALTH * 3,
-            level:  5,
-            age:    1,
-            soul_bounty: 5,
-
-            world:  $world,
-            x:      rand(20) - rand(20),
-            y:      rand(20) - rand(20),
-          })
-          report m, "An evil scissors giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
+          report m, "An evil #{giant.role} has spawned at (#{giant.x}, #{giant.y})! Defeat it for #{giant.soul_bounty} bonus souls!"
         end
       end
     end
