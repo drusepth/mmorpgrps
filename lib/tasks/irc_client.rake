@@ -1,6 +1,6 @@
 namespace :play do
   desc "Create a world"
-  task :irc => :environment do
+  task :irc, [:world_id] => :environment do |t, args|
     require 'cinch'
 
     $config = {
@@ -32,23 +32,12 @@ namespace :play do
 
     GAME_TICK_REGEX             = /.*/
 
-
-    def world_stats
-      {
-        'Living souls'     => Soul.where(alive: true).count,
-        'Dead souls'       => Soul.where(alive: false).count,
-        'Free souls'       => Player.sum(:souls),
-        'Players'          => Player.count,
-        'Rocks'            => Soul.where(alive: true, role: 'rock').count,
-        'Papers'           => Soul.where(alive: true, role: 'paper').count,
-        'Scissors'         => Soul.where(alive: true, role: 'scissor').count,
-        'Giants'           => Soul.where(alive: true, role: ['rock giant', 'paper giant', 'scissors giant']).count,
-        'Average soul age' => Soul.average(:age).to_i
-      }
-    end
-
-    def human_friendly_world_stats
-      world_stats.map { |item, quantity| "#{quantity} #{item.downcase}" }.to_sentence
+    if args[:world_id]
+      puts "Loading world #{args[:world_id]}..."
+      $world = World.find(args[:world_id])
+    else
+      puts "Creating new world..."
+      $world = World.create(height: 100, width: 100)
     end
 
     def report m, message
@@ -68,37 +57,17 @@ namespace :play do
         c.messages_per_second = $config[:messages_per_second]
       end
 
-      # TODO: Put all this logic in some SpawnerService and just pass raw text in
-
       on :message, LUI_SPAWN_REGEX do |m|
-        player = Player.find_or_initialize_by(name: m.user.nick)
+        player = $world.players.find_or_create_by(name: m.user.nick)
 
         m.message.scan(LUI_SPAWN_REGEX) do |quantity, role|
           quantity = 1 if quantity.nil?
-          if quantity.to_i > player.souls
-            report m, "#{player.name}: You only have #{player.souls} souls to spawn with."
+          spawned = SpawnService.spawn quantity: quantity.to_i, role: role, player: player, world: $world
+
+          if spawned
+            report m, "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.free_souls} soul(s) remaining. The world now contains #{$world.human_readable_stats}."
           else
-            puts "Spawning #{quantity} #{role}"
-
-            if player.souls >= quantity.to_i
-              Soul.create(Array.new(quantity.to_i) {
-                {
-                  player: player,
-                  role:   role,
-
-                  alive:  true,
-                  health: Soul::STARTING_HEALTH,
-                  level:  1,
-                  age:    1,
-
-                  x:      rand(Soul.maximum :x) - rand(Soul.maximum :x) + rand(20) - rand(20),
-                  y:      rand(Soul.maximum :y) - rand(Soul.maximum :y) + rand(20) - rand(20),
-                }
-              })
-              player.update_attribute :souls, player.souls - quantity.to_i
-            end
-
-            report m, "#{player.name}: Your #{quantity} L1 #{role}s have been spawned. You have #{player.souls} soul(s) remaining. The world now contains #{human_friendly_world_stats}."
+            report m, "#{player.name}: You only have #{player.free_souls} souls to spawn with."
           end
         end
       end
@@ -112,31 +81,31 @@ namespace :play do
       end
 
       on :message, LUI_WORLD_INFO_REGEX do |m|
-        report m, "The world contains #{human_friendly_world_stats}."
+        report m, "The world contains #{$world.human_readable_stats}."
       end
 
       on :message, LUI_SOUL_COUNT_INFO_REGEX do |m|
-        player = Player.find_or_initialize_by(name: m.user.nick)
-        report m, "#{m.user.nick}: You have #{player.souls} soul(s) remaining. You can use them to spawn knights of Rock, Paper, or Scissors into the world. Just say something like 'spawn 5 rocks' or 'spawn 1 scissors'."
+        player = $world.players.find_or_create_by(name: m.user.nick)
+        report m, "#{m.user.nick}: You have #{player.free_souls} soul(s) remaining. You can use them to spawn knights of Rock, Paper, or Scissors into the world. Just say something like 'spawn 5 rocks' or 'spawn 1 scissors'."
       end
 
       on :message, LUI_OLDEST_SCOREBOARD_REGEX do |m|
-        soul = Soul.where(alive: true).order('age DESC').first
+        soul = $world.souls.where(alive: true).order('age DESC').first
         report m, "The oldest living soul in this world is a L#{soul.level} #{soul.role.upcase} spawned by #{soul.player.name}, surviving for #{soul.age} ticks. That #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_LEVEL_SCOREBOARD_REGEX do |m|
-        soul = Soul.where(alive: true).order('level DESC').first
+        soul = $world.souls.where(alive: true).order('level DESC').first
         report m, "The highest level living soul in this world is a #{soul.role.upcase} spawned by #{soul.player.name}. That level #{soul.level} #{soul.role} has #{soul.health} health and is located at (#{soul.x}, #{soul.y})."
       end
 
       on :message, LUI_MY_SOULS_INFO_REGEX do |m|
-        player   = Player.find_or_initialize_by(name: m.user.nick)
-        rocks    = Soul.where(player: player, role: 'rock', alive: true).order('level DESC')
-        papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
-        scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
-        highest  = Soul.where(player: player).order('level DESC').first
-        oldest   = Soul.where(player: player).order('age DESC').first
+        player   = $world.players.find_or_create_by(name: m.user.nick)
+        rocks    = $world.souls.where(player: player, role: 'rock', alive: true).order('level DESC')
+        papers   = $world.souls.where(player: player, role: 'paper', alive: true).order('level DESC')
+        scissors = $world.souls.where(player: player, role: 'scissor', alive: true).order('level DESC')
+        highest  = $world.souls.where(player: player).order('level DESC').first
+        oldest   = $world.souls.where(player: player).order('age DESC').first
 
         report m, ([
           "#{player.name}: You currently control #{rocks.count} rocks, ",
@@ -149,12 +118,12 @@ namespace :play do
 
       on :message, LUI_PLAYER_STATS_INFO_REGEX do |m|
         m.message.scan(LUI_PLAYER_STATS_INFO_REGEX) do |player_name|
-          player   = Player.find_or_initialize_by(name: player_name.first)
-          rocks    = Soul.where(player: player, role: 'rock', alive: true).order('level DESC')
-          papers   = Soul.where(player: player, role: 'paper', alive: true).order('level DESC')
-          scissors = Soul.where(player: player, role: 'scissor', alive: true).order('level DESC')
-          highest  = Soul.where(player: player).order('level DESC').first
-          oldest   = Soul.where(player: player).order('age DESC').first
+          player   = $world.players.find_or_create_by(name: player_name.first)
+          rocks    = $world.souls.where(player: player, role: 'rock', alive: true).order('level DESC')
+          papers   = $world.souls.where(player: player, role: 'paper', alive: true).order('level DESC')
+          scissors = $world.souls.where(player: player, role: 'scissor', alive: true).order('level DESC')
+          highest  = $world.souls.where(player: player).order('level DESC').first
+          oldest   = $world.souls.where(player: player).order('age DESC').first
 
           report m, ([
             "#{m.user.nick}: #{player_name.first} currently controls #{rocks.count} rocks, ",
@@ -184,13 +153,13 @@ namespace :play do
 
       on :message, GAME_TICK_REGEX do |m|
         # Tick world forward
-        # TODO: Move game tick logic into WorldTickService
-        souls = Soul.where(alive: true)
+        # TODO: Move game tick logic into world.tick
+        souls = $world.souls.where(alive: true)
         souls.each do |soul|
           soul.age!
           soul.move!
 
-          other_souls_here = Soul.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
+          other_souls_here = $world.souls.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
           other_souls_here.each do |other_soul|
             soul.attack! other_soul
 
@@ -221,7 +190,7 @@ namespace :play do
         # Maybe spawn a boss or something
         if rand(100) == 0
           s = Soul.create({
-            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
             role:   'rock giant',
 
             alive:  true,
@@ -230,13 +199,14 @@ namespace :play do
             age:    1,
             soul_bounty: 5,
 
+            world:  $world,
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })
           report m, "An evil rock giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
         elsif rand(100) == 0
           s = Soul.create({
-            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
             role:   'paper giant',
 
             alive:  true,
@@ -245,13 +215,14 @@ namespace :play do
             age:    1,
             soul_bounty: 5,
 
+            world:  $world,
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })
           report m, "An evil paper giant has spawned at (#{s.x}, #{s.y})! Defeat it for 5 bonus souls!"
         elsif rand(100) == 0
           s = Soul.create({
-            player: Player.find_or_initialize_by(name: 'Evil Bad Guy'),
+            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
             role:   'paper giant',
 
             alive:  true,
@@ -260,6 +231,7 @@ namespace :play do
             age:    1,
             soul_bounty: 5,
 
+            world:  $world,
             x:      rand(20) - rand(20),
             y:      rand(20) - rand(20),
           })

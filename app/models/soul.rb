@@ -1,5 +1,6 @@
 class Soul < ActiveRecord::Base
   belongs_to :player
+  belongs_to :world
 
   STARTING_HEALTH          = 100
   HEALTH_PER_LEVEL_UP      = 50

@@ -11,14 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160704013442) do
+ActiveRecord::Schema.define(version: 20161115191754) do
 
   create_table "players", force: :cascade do |t|
     t.string   "name"
-    t.integer  "souls",      default: 10
+    t.integer  "free_souls", default: 10
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+    t.integer  "world_id"
   end
+
+  add_index "players", ["world_id"], name: "index_players_on_world_id"
 
   create_table "souls", force: :cascade do |t|
     t.string   "role"
@@ -32,8 +35,17 @@ ActiveRecord::Schema.define(version: 20160704013442) do
     t.integer  "age"
     t.integer  "player_id"
     t.integer  "soul_bounty", default: 0
+    t.integer  "world_id"
   end
 
   add_index "souls", ["player_id"], name: "index_souls_on_player_id"
+  add_index "souls", ["world_id"], name: "index_souls_on_world_id"
+
+  create_table "worlds", force: :cascade do |t|
+    t.integer  "height"
+    t.integer  "width"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
 end
