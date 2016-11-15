@@ -1,11 +1,14 @@
-namespace :irc do
+namespace :play do
   desc "Create a world"
-  task :play => :environment do
+  task :irc => :environment do
     require 'cinch'
 
-    config = {
+    $config = {
       network:             'irc.wobscale.website',
-      channel:             '#rps',
+      channels:            [
+        { name: '#rps', reporting: true  },
+        { name: '#fj2',  reporting: false }
+      ],
       nick:                'RPSGM',
       messages_per_second: 10,
     }
@@ -50,15 +53,19 @@ namespace :irc do
 
     def report m, message
       message = Format(:pink, message)
-      m.reply message
+
+      reporting_channels = $config[:channels].select { |c| c[:reporting] }.map { |c| c[:name] }
+      m.bot.channels.select { |channel| reporting_channels.include? channel.name }.each do |c|
+        c.send(message)
+      end
     end
 
     bot = Cinch::Bot.new do
       configure do |c|
-        c.server   = config[:network]
-        c.channels = ['#aw', config[:channel]]
-        c.nick     = config[:nick]
-        c.messages_per_second = config[:messages_per_second]
+        c.server   = $config[:network]
+        c.channels = $config[:channels].map { |channel| channel[:name] }
+        c.nick     = $config[:nick]
+        c.messages_per_second = $config[:messages_per_second]
       end
 
       # TODO: Put all this logic in some SpawnerService and just pass raw text in
