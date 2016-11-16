@@ -13,10 +13,10 @@ Rules of the game
 
 * Each player begins with 10 free souls, and can use any number of those souls to
   spawn knights of Rock, Paper, or Scissors into the world.
-* There are no boundaries to the world. The center of it begins at coordinate (0, 0)
-  and stretches infinitely in all four directions.
-* For the time being, knights are spawned randomly within the bounding box of the
-  outer-most knights in each direction of the world.
+* Each world has height and width dimensions (default 100x100), and moving to any
+  edge will wrap knights around to the opposite edge (as if the world were round!).
+* The (0,0) coordinate is in the top-left of the map.
+* For the time being, knights are spawned randomly within the world.
 * The game ticks time forward  with every message sent over IRC, whether related
   to the game or not. During each tick, every knight ages, moves, and attacks all
   other knights owned by other players nearby.
@@ -25,12 +25,14 @@ Rules of the game
   will move randomly until they find friends.
 * Knights never attack their own faction, however. Scissors won't attack scissors,
   paper won't attack paper, and rock won't attack rock.
+* Additionally, knights owned by the same player will not attack each other, even if
+  they are of different factions (e.g. Bob's rocks won't attack his scissors).
 * During each tick of the game, there is a small chance that an Evil Giant will spawn
   as a Rock Giant / Paper Giant / Scissors Giant. These giants can be attacked by
-  any faction, and reward 5 bonus souls to the player that lands the killing blow on them.
+  any faction, and reward bonus souls to the player that lands the killing blow on them.
 * Knights start out with 100 HP, and super-effective attacks (e.g. paper to rock) deal
   100 damage. Not-very-effective attacks (e.g. paper to scissors) deal 25 damage.
-* Older knights attack first.
+* Older knights always attack first.
 * Whenever a knight dies, the player that spawned it is refunded one soul to spawn
   another knight with.
 * Whenever a knight dies, the knight that killed it levels up and gains 50 health.
@@ -82,7 +84,11 @@ and then connect an IRC client to your favorite network and channel with
 rake irc:play
 ```
 
-You will need to customize the network/channel (and potentially nick) in `lib/tasks/irc_client.rake`.
+You will need to customize the network/channel (and potentially nick) in `lib/tasks/irc_client.rake`. By default, this will create a new world for you. You can reconnect to existing worlds by specifying their ID
+as a parameter, e.g.
+```
+rake irc:play 4
+```
 
 To run the web server, simply run:
 
