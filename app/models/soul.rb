@@ -10,7 +10,7 @@ class Soul < ActiveRecord::Base
   WEAK_ATTACK_DIVIDER      = 2
 
   def age!
-    self.age = age + 1
+    self.age = age + 0.1
   end
 
   def move!
@@ -70,7 +70,7 @@ class Soul < ActiveRecord::Base
   end
 
   def swarm_nearest_faction!
-    faction_souls_nearby = Soul.where(
+    faction_souls_nearby = world.souls.where(
       alive: true,
       role: role,
       x: (x - VISION_RANGE)..(x + VISION_RANGE),
@@ -96,7 +96,7 @@ class Soul < ActiveRecord::Base
   end
 
   def swarm_nearest_soul!
-    souls_nearby = Soul.where(
+    souls_nearby = world.souls.where(
       alive: true,
       x: (x - VISION_RANGE)..(x + VISION_RANGE),
       y: (y - VISION_RANGE)..(y + VISION_RANGE)
@@ -122,8 +122,8 @@ class Soul < ActiveRecord::Base
 
   def move_to x, y
     update_attributes!({
-      x: new_x_coord % world.width,
-      y: new_y_coord % world.height
+      x: x % world.width,
+      y: y % world.height
     })
   end
 end

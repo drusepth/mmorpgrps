@@ -136,7 +136,7 @@ namespace :play do
       end
 
       on :message, LUI_LOCATIONS_INFO_REGEX do |m|
-        report m, "There are souls located at #{Soul.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
+        report m, "There are souls located at #{$world.souls.where(alive: true).order(:x).map { |s| "(#{s.x},#{s.y})" }.to_sentence}."
       end
 
       on :message, LUI_MAP_INFO_REGEX do |m|
@@ -153,55 +153,9 @@ namespace :play do
 
       on :message, GAME_TICK_REGEX do |m|
         # Tick world forward
-        # TODO: Move game tick logic into world.tick
-        souls = $world.souls.where(alive: true)
-        souls.each do |soul|
-          soul.age!
-          soul.move!
+        world_messages = $world.tick
 
-          other_souls_here = $world.souls.where(alive: true, x: soul.x, y: soul.y).where.not(player: soul.player, role: soul.role)
-          other_souls_here.each do |other_soul|
-            soul.attack! other_soul
-
-            messages = [
-              "#{soul.player.name}'s L#{soul.level} #{soul.role} at (#{soul.x}, #{soul.y}) attacked #{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} at (#{other_soul.x}, #{other_soul.y})."
-            ]
-            if soul.alive
-              messages << "#{soul.player.name}'s #{soul.role} has #{soul.health} health remaining."
-            else
-              messages << "#{soul.player.name}'s L#{soul.level} #{soul.role} has died!"
-            end
-
-            if other_soul.alive
-              messages << "#{other_soul.player.name}'s #{other_soul.role} has #{other_soul.health} health remaining."
-            else
-              messages << "#{other_soul.player.name}'s L#{other_soul.level} #{other_soul.role} has died!"
-            end
-
-            report m, messages.join(' ')
-            other_soul.save if other_soul.changed?
-          end
-        end
-
-        ActiveRecord::Base.transaction do
-          souls.each { |soul| soul.save if soul.changed? }
-        end
-
-        # Maybe spawn a boss or something
-        if rand(500) == 0
-          giant = SpawnService.spawn(quantity: 1,
-            role: %w(rock paper scissors).sample + ' giant',
-            player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
-            world: $world,
-            attributes: {
-              level:       5,
-              health:      Soul::STARTING_HEALTH * 3,
-              soul_bounty: 5
-            }
-          ).first
-
-          report m, "An evil #{giant.role} has spawned at (#{giant.x}, #{giant.y})! Defeat it for #{giant.soul_bounty} bonus souls!"
-        end
+        world_messages.each { |message| report m, message }
       end
     end
 
