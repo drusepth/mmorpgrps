@@ -15,6 +15,7 @@ class World < ActiveRecord::Base
       'Papers'           => souls.where(alive: true, role: 'paper').count,
       'Scissors'         => souls.where(alive: true, role: 'scissor').count,
       'Giants'           => souls.where(alive: true, role: ['rock giant', 'paper giant', 'scissors giant']).count,
+      'Dragons'          => souls.where(alive: true, role: ['rock dragon', 'paper dragon', 'scissors dragon']).count,
       'Average soul age' => souls.average(:age).to_i
     }
   end
@@ -30,13 +31,10 @@ class World < ActiveRecord::Base
       soul.age!
       soul.move!
 
-      puts "doing stuff with #{soul.id} (#{soul.role}) at #{soul.x}, #{soul.y}"
-
       other_souls_here = souls.where(alive: true, x: soul.x, y: soul.y)
         .where.not(player: soul.player, role: soul.role)
 
       other_souls_here.each do |other_soul|
-        puts "attacking other soul #{other_soul.id} at #{soul.x}, #{soul.y}"
         soul.attack! other_soul
 
         messages_to_concatenate = [

@@ -8,7 +8,7 @@
 		<th>Health remaining</th>
 		<th>Location</th>
 	</tr>
-	<% Soul.where(alive: true).order('level DESC, age DESC').limit(10).each do |soul| %>
+	<% @world.souls.where(alive: true).order('level DESC, age DESC').limit(10).each do |soul| %>
 	<tr>
 		<td>L<%= soul.level %></td>
 		<td><%= soul.role %></td>
@@ -30,7 +30,7 @@
 		<th>Health remaining</th>
 		<th>Location</th>
 	</tr>
-	<% Soul.where(alive: true).order('age DESC, level DESC').limit(10).each do |soul| %>
+	<% @world.souls.where(alive: true).order('age DESC, level DESC').limit(10).each do |soul| %>
 	<tr>
 		<td>L<%= soul.level %></td>
 		<td><%= soul.role %></td>
@@ -52,7 +52,7 @@
 		<th>Health remaining</th>
 		<th>Location</th>
 	</tr>
-	<% Soul.where(alive: true).order('health DESC, level DESC, age DESC').limit(10).each do |soul| %>
+	<% @world.souls.where(alive: true).order('health DESC, level DESC, age DESC').limit(10).each do |soul| %>
 	<tr>
 		<td>L<%= soul.level %></td>
 		<td><%= soul.role %></td>
@@ -72,12 +72,12 @@
 		<th>Free souls</th>
 		<th>Potential souls</th>
 	</tr>
-	<% Player.order('souls DESC').limit(10).each do |player| %>
+	<% @world.players.order('free_souls DESC').limit(10).each do |player| %>
 	<tr>
 		<td><%= player.name %></td>
-		<td><%= Soul.where(player: player, alive: true).count %></td>
-		<td><%= player.souls %></td>
-		<td><%= Soul.where(player: player, alive: true).count + player.souls %></td>
+		<td><%= @world.souls.where(player: player, alive: true).count %></td>
+		<td><%= player.free_souls %></td>
+		<td><%= @world.souls.where(player: player, alive: true).count + player.free_souls %></td>
 	</tr>
 	<% end %>
 </table>
@@ -94,7 +94,7 @@
 		<th>Health remaining</th>
 		<th>Alive?</th>
 	</tr>
-	<% Soul.order('level DESC, age DESC').limit(10).each do |soul| %>
+	<% @world.souls.order('level DESC, age DESC').limit(10).each do |soul| %>
 	<tr>
 		<td>L<%= soul.level %></td>
 		<td><%= soul.role %></td>
@@ -116,7 +116,7 @@
 		<th>Health remaining</th>
 		<th>Alive?</th>
 	</tr>
-	<% Soul.order('age DESC, level DESC').limit(10).each do |soul| %>
+	<% @world.souls.order('age DESC, level DESC').limit(10).each do |soul| %>
 	<tr>
 		<td>L<%= soul.level %></td>
 		<td><%= soul.role %></td>

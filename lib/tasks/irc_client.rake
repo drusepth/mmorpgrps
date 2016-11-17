@@ -1,13 +1,15 @@
 namespace :play do
   desc "Create a world"
-  task :irc, [:world_id] => :environment do |t, args|
+  task :irc => :environment do |t|
     require 'cinch'
 
+    puts "Connecting to #{ENV['network']} on #{ENV['channel']}"
+
     $config = {
-      network:             'irc.wobscale.website',
+      network:             ENV['network'],
       channels:            [
         { name: '#rps', reporting: true  },
-        { name: '#fj2',  reporting: false }
+        { name: ENV['channel'], reporting: false }
       ],
       nick:                'RPSGM',
       messages_per_second: 10,
@@ -32,13 +34,14 @@ namespace :play do
 
     GAME_TICK_REGEX             = /.*/
 
-    if args[:world_id]
-      puts "Loading world #{args[:world_id]}..."
-      $world = World.find(args[:world_id])
+    if ENV['world_id']
+      puts "Loading world #{ENV['world_id']}..."
+      $world = World.find(ENV['world_id'])
     else
       puts "Creating new world..."
       $world = World.create(height: 100, width: 100)
     end
+    $world.reload
 
     def report m, message
       message = Format(:pink, message)
@@ -55,6 +58,8 @@ namespace :play do
         c.channels = $config[:channels].map { |channel| channel[:name] }
         c.nick     = $config[:nick]
         c.messages_per_second = $config[:messages_per_second]
+        #c.port = '6697'
+        #c.ssl.use = true
       end
 
       on :message, LUI_SPAWN_REGEX do |m|
@@ -76,7 +81,7 @@ namespace :play do
         report m, ([
           "Welcome to the war-torn world of rock, paper, scissors!",
           "Every time someone says something on IRC, time ticks forward. Rocks kill scissors, scissors kill paper, and paper kills rock.",
-          "Spawn your knights by telling me 'spawn 3 rocks' or 'span 1 scissors' and regain the land for your faction!"
+          "Spawn your knights by telling me 'spawn 3 rocks' or 'spawn 1 scissors' and regain the land for your faction!"
         ].join ' ')
       end
 
@@ -140,11 +145,11 @@ namespace :play do
       end
 
       on :message, LUI_MAP_INFO_REGEX do |m|
-        report m, "The world map is available here: https://polar-spire-49459.herokuapp.com/world/map"
+        report m, "The world map is available here: https://polar-spire-49459.herokuapp.com/world/#{$world.id}/map"
       end
 
       on :message, LUI_SCOREBOARDS_INFO_REGEX do |m|
-        report m, "Live scoreboards are available here: https://polar-spire-49459.herokuapp.com/world/scoreboards"
+        report m, "Live scoreboards are available here: https://polar-spire-49459.herokuapp.com/world/#{$world.id}/scoreboards"
       end
 
       on :message, LUI_SOURCE_CODE_INFO_REGEX do |m|
