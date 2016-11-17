@@ -3,6 +3,7 @@ class World < ActiveRecord::Base
   has_many :souls, through: :players
 
   GIANT_SPAWN_RATE = 500 # One in X chance to spawn a giant per tick
+  DRAGON_SPAWN_RATE = 750 # One in X chance to spawn a dragon per tick
 
   def stats
     {
@@ -76,6 +77,21 @@ class World < ActiveRecord::Base
       ).first
 
       messages_to_report << "An evil #{giant.role} has spawned at (#{giant.x}, #{giant.y})! Defeat it for #{giant.soul_bounty} bonus souls!"
+    end
+
+    if rand(DRAGON_SPAWN_RATE) == 0
+      dragon = SpawnService.spawn(quantity: 1,
+        role: %w(rock paper scissors).sample + ' dragon',
+        player: $world.players.find_or_create_by(name: 'Evil Bad Guy'),
+        world: $world,
+        attributes: {
+          level:       7,
+          health:      Soul::STARTING_HEALTH * 5,
+          soul_bounty: 50
+        }
+      ).first
+
+      messages_to_report << "An evil #{dragon.role} has spawned at (#{dragon.x}, #{dragon.y})! Defeat it for #{dragon.soul_bounty} bonus souls!"
     end
 
     # Return any world events to report
