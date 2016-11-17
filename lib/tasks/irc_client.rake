@@ -81,7 +81,7 @@ namespace :play do
       end
 
       on :message, LUI_WORLD_INFO_REGEX do |m|
-        report m, "The world contains #{$world.human_readable_stats}."
+        report m, "This #{$world.width}x#{$world.height} world contains #{$world.human_readable_stats}."
       end
 
       on :message, LUI_SOUL_COUNT_INFO_REGEX do |m|
