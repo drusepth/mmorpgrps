@@ -58,8 +58,8 @@ namespace :play do
         c.channels = $config[:channels].map { |channel| channel[:name] }
         c.nick     = $config[:nick]
         c.messages_per_second = $config[:messages_per_second]
-        #c.port = '6697'
-        #c.ssl.use = true
+        c.port = '6697'
+        c.ssl.use = true
       end
 
       on :message, LUI_SPAWN_REGEX do |m|
